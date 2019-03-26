@@ -2,45 +2,39 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 
 class App extends React.Component {
-  constructor() {
+  constructor(){
     super();
-    this.state = { a: '' }
+    this.state = {increasing: false}
+  }
+  update(){
+    ReactDOM.render(
+      <App val={this.props.val+1}/>, 
+      document.getElementById('root'))
   }
 
-  update(e) {
-    this.setState({ 
-      a: this.a.refs.input.value,
-      b: this.refs.b.value
-    })
+  componentWillReceiveProps(nextProps){
+    this.setState({increasing:nextProps.val > this.props.val}) 
   }
 
-  render() {
-    return (
-      <div>
-        <Input
-          ref={component =>this.a = component}
-          update={this.update.bind(this)}
-        />{this.state.a}
-        <hr />
-        <input
-          ref="b"
-          type="text"
-          onChange={this.update.bind(this)}
-        />{this.state.b}
-      </div>
+  shouldComponentUpdate(nextProps, nextState){
+    return nextProps.val % 5 === 0;
+  }
+
+  render(){
+    console.log(this.state.increasing)
+    return(
+      <button onClick={this.update.bind(this)}>
+        {this.props.val }
+      </button>
     )
   }
-}
 
-//referencia a una instancia de otro componente 
-class Input extends React.Component {
-  render(){
-    return <div><input ref="input" type="text" onChange={this.props.update}/></div>
+  componentDidUpdate(prevProps, prevState){
+    console.log(`prevProps: ${prevProps.val}`)
   }
 }
 
-
-
+App.defaultProps = {val:0}
 
 
 export default App;
